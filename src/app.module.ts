@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EnvConfig } from './config/env.config';
 import { JoiValidationSchema } from './config/validation.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BlogModule } from './blog/blog.module';
 import { AuthModule } from './auth/auth.module';
 import { BloggerModule } from './blogger/blogger.module';
 
@@ -30,7 +29,7 @@ import { BloggerModule } from './blogger/blogger.module';
     }),
 
     // API modules
-    BlogModule, AuthModule, BloggerModule,    
+    AuthModule, BloggerModule,    
   ],
 })
 export class AppModule {}
