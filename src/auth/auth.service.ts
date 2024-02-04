@@ -1,23 +1,30 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User } from './entities/user.entity';
 // Database ORM
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 // DTO´s
+import { LoginUserDto } from './dto/login-user-dto';
+import { CreateUserByAdminDto } from './dto/create-user-by-admin-dto';
 import { CreateUserAdminDto } from './dto/create-user-admin-dto';
 import { CreateBloggerDto } from 'src/blogger/dto/create-blogger.dto';
 // Entities
 import { Blogger } from 'src/blogger/entities/blogger.entity';
 // Hashing
 import * as bcrypt from 'bcrypt';
-import { CreateUserByAdminDto } from './dto/create-user-by-admin-dto';
-import { UpdateUserDto } from './dto/update-user-dto';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayloadDto } from './dto/jwt-payload-dto';
+import { ConfigService } from '@nestjs/config';
 
 
 @Injectable()
 export class AuthService {
   constructor(
+    // private readonly configService : ConfigService,
+
     private readonly dataSource : DataSource,
+
+    private readonly jwtService : JwtService,
 
     @InjectRepository(User)
     private readonly userRepository : Repository<User>,
@@ -26,6 +33,33 @@ export class AuthService {
     private readonly bloggerRepository : Repository<Blogger>
   ){}
 
+    
+async loginUser( loginUserDto : LoginUserDto ){
+      const { password, email } = loginUserDto;
+
+      const user = await this.userRepository.findOne({
+        where: { email },
+        select: { email: true, password: true, id_user_blogger: true } //! OJO!
+      });
+
+      if ( !user ) 
+        throw new UnauthorizedException('Credentials are not valid (email)');
+        
+      if ( !bcrypt.compareSync( password, user.password ) )
+        throw new UnauthorizedException('Credentials are not valid (password)');
+
+      delete user.password;
+
+      return {
+        ...user,
+        token: this.getJwtToken({ email: user.email })
+      };
+    }
+
+    private getJwtToken( jwtPayloadDto : JwtPayloadDto ){
+      const payload = jwtPayloadDto;
+      return this.jwtService.sign(payload);
+    }
     // Se crea un usuario admin
     async createAdminUser( createUserAdminDto : CreateUserAdminDto ){
       try {

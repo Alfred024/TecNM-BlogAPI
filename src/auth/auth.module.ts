@@ -10,10 +10,11 @@ import { User } from './entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { BloggerModule } from 'src/blogger/blogger.module';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
   imports:[
     ConfigModule,
 
@@ -28,7 +29,7 @@ import { BloggerModule } from 'src/blogger/blogger.module';
         return {
           secret: configService.get('jwt_secret'),
           signOptions: {
-            expiresIn:'2h'
+            expiresIn: '2h'
           }
         }
       }
@@ -40,7 +41,8 @@ import { BloggerModule } from 'src/blogger/blogger.module';
     CreateBloggerDto, Blogger
   ],
   exports: [
-
+    TypeOrmModule, JwtStrategy, JwtModule, PassportModule, 
+    // JwtModule, PassportModule, 
   ],
 })
 export class AuthModule {}
