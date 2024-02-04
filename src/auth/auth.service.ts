@@ -34,7 +34,7 @@ export class AuthService {
   ){}
 
     
-async loginUser( loginUserDto : LoginUserDto ){
+    async loginUser( loginUserDto : LoginUserDto ){
       const { password, email } = loginUserDto;
 
       const user = await this.userRepository.findOne({
@@ -74,6 +74,7 @@ async loginUser( loginUserDto : LoginUserDto ){
 
         await this.userRepository.save(user);
 
+        delete user.password;
         return user;
       } catch (error) {
         this.handleDBErrors(error);
@@ -107,7 +108,7 @@ async loginUser( loginUserDto : LoginUserDto ){
       await this.updateUserPassword(user, password);
 
       // 3.- hace el insert de un blogger
-      const blogger = this.bloggerRepository.create({...bloggerData});
+      const blogger = this.bloggerRepository.create({...bloggerData, id_user_blogger: user.id_user_blogger});
       await this.bloggerRepository.save(blogger);
       return blogger;
     }

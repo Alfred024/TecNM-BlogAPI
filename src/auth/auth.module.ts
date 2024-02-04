@@ -41,8 +41,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     CreateBloggerDto, Blogger
   ],
   exports: [
-    TypeOrmModule, JwtStrategy, JwtModule, PassportModule, 
-    // JwtModule, PassportModule, 
+    TypeOrmModule, JwtModule, PassportModule, 
   ],
 })
 export class AuthModule {}

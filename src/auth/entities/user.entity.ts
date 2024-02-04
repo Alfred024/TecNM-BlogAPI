@@ -1,5 +1,4 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-//import { Product } from '../../products/entities';
+import { BeforeInsert, BeforeUpdate, Column, Entity,PrimaryGeneratedColumn } from 'typeorm';
 
 
 @Entity('user_blogger')
@@ -22,9 +21,6 @@ export class User {
         default: 'NORMAL'
     })
     role: string;
-
-    // Un user_blogger tiene un blogger 
-    // @OneToOne()
 
     @BeforeInsert()
     checkFieldsBeforeInsert() {
