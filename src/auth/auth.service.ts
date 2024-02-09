@@ -86,11 +86,18 @@ export class AuthService {
       try { 
         const user = this.userRepository.create({
           ...createUserByAdminDto
-        });
-        // await función para mandar un correo al usuario
+        }); 
+        const token = this.getJwtToken({ email: user.email });
+        // TODO: await función para mandar un correo al usuario, usa el token para concatenarlo al link del email 
+        // Vamos a definir que cree el JWT dentro de la función de email, tenemos el token aquí por cuestiones prácticas
         await this.userRepository.save(user);
 
-        return user;
+        // Este token no va aquí, se quita cuando se cree el servicio de email
+        return {
+          'message': 'Este token se debe quitar una vez se implemnete el servicio de SMTP',
+          'user': user,
+          'token': token,
+        };
       } catch (error) {
         this.handleDBErrors(error);
       }
