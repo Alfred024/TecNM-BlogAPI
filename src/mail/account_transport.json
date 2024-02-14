@@ -1,0 +1,10 @@
+{
+    "service": "gmail",
+    "auth": {
+      "type": "OAuth2",
+      "user": "alfredo.jimeneztellez9@gmail.com",
+      "clientId": "751014177446-fgq1ne8lhqa0pspc3u5elmf237pf4d5u.apps.googleusercontent.com",
+      "clientSecret": "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",
+      "refreshToken": "1//04XzRFy4B7zHOCgYIARAAGAQSNwF-L9IrvPFZuPTUG0JdXAml_lfjLBxfdH1ar0JAMa9eh0CiFkSIsHjkf0MBQiveRV6EP76vgcg"
+    }
+  }

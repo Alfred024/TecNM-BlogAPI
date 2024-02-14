@@ -11,6 +11,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { BloggerModule } from 'src/blogger/blogger.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { Career } from 'src/career/entities/career.entity';
+import { JWTGuard } from './guards/jwt.guard';
 
 @Module({
   controllers: [AuthController],
@@ -36,7 +38,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
 
     // Modules components
-    BloggerModule,
+    BloggerModule, Career,
     // DTO´s
     CreateBloggerDto, Blogger
   ],

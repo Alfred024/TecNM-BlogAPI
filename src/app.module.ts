@@ -5,6 +5,8 @@ import { JoiValidationSchema } from './config/validation.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { BloggerModule } from './blogger/blogger.module';
+import { CareerModule } from './career/career.module';
+import { BlogModule } from './blog/blog.module';
 
 @Module({
   imports: [
@@ -29,7 +31,7 @@ import { BloggerModule } from './blogger/blogger.module';
     }),
 
     // API modules
-    AuthModule, BloggerModule,    
+    AuthModule, BloggerModule, CareerModule, BlogModule,    
   ],
 })
 export class AppModule {}

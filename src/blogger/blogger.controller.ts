@@ -1,25 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { BloggerService } from './blogger.service';
-import { CreateBloggerDto } from './dto/create-blogger.dto';
 import { UpdateBloggerDto } from './dto/update-blogger.dto';
+import { JWTGuard } from 'src/auth/guards/jwt.guard';
+import { CreateBlogDto } from 'src/blog/dto/create-blog.dto';
 
 @Controller('blogger')
 export class BloggerController {
   constructor(private readonly bloggerService: BloggerService) {}
-
-  @Post()
-  create(@Body() createBloggerDto: CreateBloggerDto) {
-    return this.bloggerService.create(createBloggerDto);
-  }
 
   @Get()
   findAll() {
     return this.bloggerService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bloggerService.findOne(+id);
+  @Get(':term')
+  findOne(@Param('term') term: string) {
+    return this.bloggerService.findOne(term);
+  }
+
+  @Post('create-new-blog')
+  create(@Body() createBlogDto : CreateBlogDto ){
+    return this.bloggerService.createBlog(createBlogDto);
   }
 
   @Patch(':id')
@@ -29,6 +30,6 @@ export class BloggerController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.bloggerService.remove(+id);
+    return this.bloggerService.remove(id);
   }
 }

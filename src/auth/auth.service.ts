@@ -15,6 +15,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayloadDto } from './dto/jwt-payload-dto';
 import { ConfigService } from '@nestjs/config';
+import { Career } from 'src/career/entities/career.entity';
 
 
 @Injectable()
@@ -30,7 +31,8 @@ export class AuthService {
     private readonly userRepository : Repository<User>,
 
     @InjectRepository(Blogger)
-    private readonly bloggerRepository : Repository<Blogger>
+    private readonly bloggerRepository : Repository<Blogger>,
+
   ){}
 
     
@@ -105,17 +107,18 @@ export class AuthService {
 
     // El usuario registrado por un ADMIN crea un blogger
     async createBlogger(createBloggerDto : CreateBloggerDto) {
-      const {email, password, ...bloggerData} = createBloggerDto;
+      const {email, password,...bloggerData } = createBloggerDto;
 
       // 1.- busca el usuario por el email
       let user = await this.userRepository.findOne({where: {email}});
       if (!user) throw new NotFoundException(`User with email: ${email} not found!!!`);
-      
+
       // 2.- actualiza la contrasseña del usuario 
       await this.updateUserPassword(user, password);
-
+      
       // 3.- hace el insert de un blogger
-      const blogger = this.bloggerRepository.create({...bloggerData, id_user_blogger: user.id_user_blogger});
+      //return {...bloggerData, user: user};
+      const blogger = this.bloggerRepository.create({...bloggerData, id_user_blogger: user.id_user_blogger });
       await this.bloggerRepository.save(blogger);
       return blogger;
     }
