@@ -14,8 +14,6 @@ import { Blogger } from 'src/blogger/entities/blogger.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayloadDto } from './dto/jwt-payload-dto';
-import { ConfigService } from '@nestjs/config';
-import { Career } from 'src/career/entities/career.entity';
 
 
 @Injectable()
@@ -54,12 +52,13 @@ export class AuthService {
 
       return {
         ...user,
-        token: this.getJwtToken({ email: user.email })
+        token: this.getJwtToken({ sub: user.id_user_blogger })
       };
     }
 
     private getJwtToken( jwtPayloadDto : JwtPayloadDto ){
       const payload = jwtPayloadDto;
+      console.log(payload);
       return this.jwtService.sign(payload);
     }
     // Se crea un usuario admin
@@ -89,11 +88,10 @@ export class AuthService {
         const user = this.userRepository.create({
           ...createUserByAdminDto
         }); 
-        const token = this.getJwtToken({ email: user.email });
         // TODO: await función para mandar un correo al usuario, usa el token para concatenarlo al link del email 
-        // Vamos a definir que cree el JWT dentro de la función de email, tenemos el token aquí por cuestiones prácticas
         await this.userRepository.save(user);
 
+        const token = this.getJwtToken({ sub: user.id_user_blogger  });
         // Este token no va aquí, se quita cuando se cree el servicio de email
         return {
           'message': 'Este token se debe quitar una vez se implemnete el servicio de SMTP',

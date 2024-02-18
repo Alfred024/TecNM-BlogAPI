@@ -7,6 +7,8 @@ import { Blog } from 'src/blog/entities/blog.entity';
 import { CreateBlogDto } from 'src/blog/dto/create-blog.dto';
 import { PaginationDto } from 'src/common/dtos/pagination-dto';
 import { REQUEST } from '@nestjs/core';
+import { User } from 'src/auth/entities/user.entity';
+import { JwtPayloadDto } from 'src/auth/dto/jwt-payload-dto';
 
 @Injectable()
 export class BloggerService {
@@ -27,6 +29,17 @@ export class BloggerService {
 
   findAll() {
     return `Returns all blogger`;
+  }
+
+  private async findByUserBloggerId() : Promise<Blogger>{
+    try {
+      const payload : JwtPayloadDto = this.request.user;
+      const sub : number = payload.sub;
+      const blogger = await this.bloggerRepository.findOneBy({id_user_blogger : sub});
+      return blogger;
+    } catch (error) {
+      throw Error('Blogger wansnt found');
+    }
   }
 
   async findOne(term: string) {
@@ -74,35 +87,30 @@ export class BloggerService {
 
   //Obtener los blogs del usuario 
   async findBlogs( paginationDto : PaginationDto ){
-    // TODO: Obtener el id del payload del JWT
-    const id_blogger_payload = 11;
-    const { limit = 10, offset = 0 } = paginationDto;
+    const blogger = await this.findByUserBloggerId();
+    return blogger.blogs;
+    
+    // const { limit = 10, offset = 0 } = paginationDto;
+    // const blogs = await this.blogRepository.find({
+    //   take: limit, 
+    //   skip: offset, 
+    //   relations: {
+    //       id_blogger: true,
+    //   },
+    // });
+    // return blogs;
 
-    const blogs = await this.blogRepository.find({
-      take: limit, 
-      skip: offset, 
-      relations: {
-        id_blogger: true,
-      },
-      // where: {
-      //   id_blogger: {id_blogger: id_blogger_payload},
-      // }
-    });
-
-    return blogs;
   }
 
   async createBlog(createBlogDto : CreateBlogDto){
-    // #1 Debe obtener el id_blogger de la request
-    const user = this.request.user;
-    return user;
-    // try {
-    //   const blog = this.blogRepository.create({...createBlogDto, id_blogger: {id_blogger: id_blogger_payload}});
-    //   await this.blogRepository.save(blog);
-    //   return `Creation of a blog`;
-    // } catch (error) {
-    //   return error;
-    // }
+    const blogger = await this.findByUserBloggerId();
+    try {
+      const blog = this.blogRepository.create({...createBlogDto, id_blogger: {id_blogger: blogger.id_blogger}});
+      await this.blogRepository.save(blog);
+      return `Succesfully creation of blog`;
+    } catch (error) {
+      return error;
+    }
   }
 
   private handleDBExceptions( error: any ) {

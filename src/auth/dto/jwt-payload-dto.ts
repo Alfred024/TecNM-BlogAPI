@@ -1,8 +1,6 @@
-import { IsEmail, IsString } from "class-validator";
+import { IsEmail, IsNumber, IsString } from "class-validator";
 
 export class JwtPayloadDto{
-
-   @IsString()
-   @IsEmail()
-   email : string; 
+   @IsNumber()
+   sub : number;
 }

@@ -11,6 +11,7 @@ export class BloggerController {
   constructor(private readonly bloggerService: BloggerService) {}
 
   @Get('my-blogs')
+  @UseGuards(JWTGuard)
   findAll(@Query() paginationDto:PaginationDto) {
     return this.bloggerService.findBlogs( paginationDto );
   }
