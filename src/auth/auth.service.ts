@@ -117,7 +117,6 @@ export class AuthService {
       await this.updateUserPassword(user, password);
       
       // 3.- hace el insert de un blogger
-      //return {...bloggerData, user: user};
       const blogger = this.bloggerRepository.create({...bloggerData, id_user_blogger: user.id_user_blogger });
       await this.bloggerRepository.save(blogger);
       return blogger;

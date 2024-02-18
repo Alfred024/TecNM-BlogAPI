@@ -5,6 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Blogger } from './entities/blogger.entity';
 import { Blog } from 'src/blog/entities/blog.entity';
 import { CreateBlogDto } from 'src/blog/dto/create-blog.dto';
+import { PaginationDto } from 'src/common/dtos/pagination-dto';
 
 @Injectable()
 export class BloggerService {
@@ -69,17 +70,36 @@ export class BloggerService {
   }
 
   //Obtener los blogs del usuario 
-  findBlogs(){
-    // Usa el payloda del blogger para hacer obtener sus blogs
-    return `User blogs`;
+  async findBlogs( paginationDto : PaginationDto ){
+    // TODO: Obtener el id del payload del JWT
+    const id_blogger_payload = 11;
+    const { limit = 10, offset = 0 } = paginationDto;
+
+    const blogs = await this.blogRepository.find({
+      take: limit, 
+      skip: offset, 
+      relations: {
+        id_blogger: true,
+      },
+      // where: {
+      //   id_blogger: {id_blogger: id_blogger_payload},
+      // }
+    });
+
+    return blogs;
   }
 
-  createBlog(createBlogDto : CreateBlogDto){
-    // #1 Obtiene el id_blogger de la request
-    // #2 Agrega el id al body
-
-
-    return `Creation of a blog`;
+  async createBlog(createBlogDto : CreateBlogDto){
+    // #1 Debe obtener el id_blogger de la request
+    const id_blogger_payload = 11;
+    
+    try {
+      const blog = this.blogRepository.create({...createBlogDto, id_blogger: {id_blogger: id_blogger_payload}});
+      await this.blogRepository.save(blog);
+      return `Creation of a blog`;
+    } catch (error) {
+      return error;
+    }
   }
 
   private handleDBExceptions( error: any ) {
