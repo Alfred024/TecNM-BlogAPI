@@ -17,6 +17,7 @@ import { JWTGuard } from './guards/jwt.guard';
 @Module({
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
+  //providers: [AuthService, JwtStrategy, JWTGuard],
   imports:[
     ConfigModule,
 

@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,  Query, UseGuards } from '@nestjs/common';
 import { BloggerService } from './blogger.service';
 import { UpdateBloggerDto } from './dto/update-blogger.dto';
-import { JWTGuard } from 'src/auth/guards/jwt.guard';
+//import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { CreateBlogDto } from 'src/blog/dto/create-blog.dto';
 import { PaginationDto } from 'src/common/dtos/pagination-dto';
+import { JWTGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('blogger')
 export class BloggerController {
@@ -20,6 +21,7 @@ export class BloggerController {
   }
 
   @Post('create-new-blog')
+  @UseGuards(JWTGuard)
   create(@Body() createBlogDto : CreateBlogDto ){
     return this.bloggerService.createBlog(createBlogDto);
   }

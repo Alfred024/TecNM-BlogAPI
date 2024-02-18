@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { UpdateBloggerDto } from './dto/update-blogger.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import { Blogger } from './entities/blogger.entity';
 import { Blog } from 'src/blog/entities/blog.entity';
 import { CreateBlogDto } from 'src/blog/dto/create-blog.dto';
 import { PaginationDto } from 'src/common/dtos/pagination-dto';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class BloggerService {
@@ -13,6 +14,8 @@ export class BloggerService {
   private readonly logger = new Logger('ProductsService');
 
   constructor(
+    @Inject(REQUEST) private readonly request : any,
+
     @InjectRepository(Blogger)
     private readonly bloggerRepository : Repository<Blogger>,
 
@@ -91,15 +94,15 @@ export class BloggerService {
 
   async createBlog(createBlogDto : CreateBlogDto){
     // #1 Debe obtener el id_blogger de la request
-    const id_blogger_payload = 11;
-    
-    try {
-      const blog = this.blogRepository.create({...createBlogDto, id_blogger: {id_blogger: id_blogger_payload}});
-      await this.blogRepository.save(blog);
-      return `Creation of a blog`;
-    } catch (error) {
-      return error;
-    }
+    const user = this.request.user;
+    return user;
+    // try {
+    //   const blog = this.blogRepository.create({...createBlogDto, id_blogger: {id_blogger: id_blogger_payload}});
+    //   await this.blogRepository.save(blog);
+    //   return `Creation of a blog`;
+    // } catch (error) {
+    //   return error;
+    // }
   }
 
   private handleDBExceptions( error: any ) {
