@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { CareerService } from './career.service';
 import { CreateCareerDto } from './dto/create-career.dto';
 import { UpdateCareerDto } from './dto/update-career.dto';
+import { CheckApiKeyGuard } from 'src/auth/guards/check-api-key.guard';
+import { PaginationDto } from 'src/common/dtos/pagination-dto';
 
+@UseGuards(CheckApiKeyGuard)
 @Controller('career')
 export class CareerController {
   constructor(private readonly careerService: CareerService) {}
@@ -13,13 +16,13 @@ export class CareerController {
   }
 
   @Get()
-  findAll() {
-    return this.careerService.findAll();
+  findAll(@Query() paginationDto : PaginationDto ) {
+    return this.careerService.findAll(paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.careerService.findOne(+id);
+  @Get(':term')
+  findOne(@Param('term') term: string) {
+    return this.careerService.findOne(term);
   }
 
   @Patch(':id')
@@ -29,6 +32,6 @@ export class CareerController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.careerService.remove(+id);
+    return this.careerService.remove(id);
   }
 }

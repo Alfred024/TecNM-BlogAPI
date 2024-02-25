@@ -1,15 +1,18 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateCareerDto } from './dto/create-career.dto';
 import { UpdateCareerDto } from './dto/update-career.dto';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Career } from './entities/career.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationDto } from 'src/common/dtos/pagination-dto';
 
 @Injectable()
 export class CareerService {
   constructor(
     @InjectRepository(Career)
-    private readonly careerRepository : Repository<Career> 
+    private readonly careerRepository : Repository<Career> ,
+
+    private readonly dataSource : DataSource,
   ){}
 
   async create(createCareerDto: CreateCareerDto) {
@@ -28,20 +31,60 @@ export class CareerService {
     }
   }
 
-  findAll() {
-    return `This action returns all career`;
+  async findAll( paginationDto : PaginationDto ) {
+    const { limit = 15, offset = 0 } = paginationDto;
+
+    return await this.careerRepository.find({
+      take: limit, 
+      skip: offset,
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} career`;
+  async findOne(term: string) {
+    let career : Career;
+
+    if(Number.isNaN(+term)){
+      const queryBuilder = this.careerRepository.createQueryBuilder('career');
+      career = await queryBuilder.where('name =:name', 
+      {name: term}).getOne();
+    }else{
+      career = await this.careerRepository.findOneBy({id_career: +term})
+    }
+
+    if (!career) throw new NotFoundException(`Career with term: ${term} not found`);
+
+    return career;
   }
 
-  update(id: number, updateCareerDto: UpdateCareerDto) {
-    return `This action updates a #${id} career`;
+  async update(id_career: number, updateCareerDto: UpdateCareerDto) {
+    const career = await this.careerRepository.preload({
+      id_career, ...updateCareerDto
+    });
+    if (!career) throw new NotFoundException(`Blgger with id: ${id_career} not found`);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.save( career );
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
+      return career;
+    } catch (error) {
+      this.handleErrors(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} career`;
+  async remove(id: string) {
+    const career = await this.findOne(id);
+    try {
+      await this.careerRepository.delete(career);
+      return `Deletion succesfull`;
+    } catch (error) {
+      this.handleErrors(error);
+    }
   }
 
   private handleErrors( error: any ): never {
