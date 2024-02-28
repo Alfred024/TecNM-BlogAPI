@@ -10,10 +10,15 @@ import { JWTGuard } from 'src/auth/guards/jwt.guard';
 export class BloggerController {
   constructor(private readonly bloggerService: BloggerService) {}
 
+  @Get()
+  findAll(@Query() paginationDto : PaginationDto ){
+    return this.bloggerService.fingBloggers(paginationDto);
+  }
+
   @Get('my-blogs')
   @UseGuards(JWTGuard)
-  findAll(@Query() paginationDto:PaginationDto) {
-    return this.bloggerService.findBlogs( paginationDto );
+  findAllMine() {
+    return this.bloggerService.findMyBlogs();
   }
 
   @Get(':term')

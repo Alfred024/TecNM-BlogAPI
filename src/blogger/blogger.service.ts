@@ -27,10 +27,6 @@ export class BloggerService {
     private readonly dataSource: DataSource,
   ){}
 
-  findAll() {
-    return `Returns all blogger`;
-  }
-
   private async findByUserBloggerId() : Promise<Blogger>{
     try {
       const payload : JwtPayloadDto = this.request.user;
@@ -59,6 +55,27 @@ export class BloggerService {
     return blogger;
   }
 
+  async fingBloggers( paginationDto : PaginationDto ){
+    const { limit = 20, offset = 0 } = paginationDto;
+
+    const bloggers = await this.bloggerRepository.find({
+      take: limit,
+      skip: offset,
+    });
+
+    const bloggersResponse = bloggers.map(blogger => {
+      delete blogger.blogs
+      return blogger;
+    });
+    
+    return bloggersResponse;
+  }
+
+  async findMyBlogs(){
+    const blogger = await this.findByUserBloggerId();
+    return blogger.blogs;
+  }
+
   async update(id_blogger: number, updateBloggerDto: UpdateBloggerDto) {
     const blogger = await this.bloggerRepository.preload({
       id_blogger, ...updateBloggerDto
@@ -82,24 +99,8 @@ export class BloggerService {
 
   async remove(id: string) {
     const blogger = await this.findOne(id);
-    await this.bloggerRepository.remove(blogger);
-  }
-
-  //Obtener los blogs del usuario 
-  async findBlogs( paginationDto : PaginationDto ){
-    const blogger = await this.findByUserBloggerId();
-    return blogger.blogs;
-    
-    // const { limit = 10, offset = 0 } = paginationDto;
-    // const blogs = await this.blogRepository.find({
-    //   take: limit, 
-    //   skip: offset, 
-    //   relations: {
-    //       id_blogger: true,
-    //   },
-    // });
-    // return blogs;
-
+    const bloggerDeleted = await this.bloggerRepository.remove(blogger);
+    return bloggerDeleted;
   }
 
   async createBlog(createBlogDto : CreateBlogDto){
