@@ -13,7 +13,7 @@ import { JwtPayloadDto } from 'src/auth/dto/jwt-payload-dto';
 @Injectable()
 export class BloggerService {
    
-  private readonly logger = new Logger('ProductsService');
+  private readonly logger = new Logger('BloggerService');
 
   constructor(
     @Inject(REQUEST) private readonly request : any,

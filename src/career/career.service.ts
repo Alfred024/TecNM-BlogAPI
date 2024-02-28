@@ -4,7 +4,6 @@ import { UpdateCareerDto } from './dto/update-career.dto';
 import { DataSource, Repository } from 'typeorm';
 import { Career } from './entities/career.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationDto } from 'src/common/dtos/pagination-dto';
 
 @Injectable()
 export class CareerService {
@@ -31,13 +30,8 @@ export class CareerService {
     }
   }
 
-  async findAll( paginationDto : PaginationDto ) {
-    const { limit = 15, offset = 0 } = paginationDto;
-
-    return await this.careerRepository.find({
-      take: limit, 
-      skip: offset,
-    });
+  async findAll() {
+    return await this.careerRepository.find();
   }
 
   async findOne(term: string) {

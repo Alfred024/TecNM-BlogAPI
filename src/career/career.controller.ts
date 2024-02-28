@@ -3,7 +3,6 @@ import { CareerService } from './career.service';
 import { CreateCareerDto } from './dto/create-career.dto';
 import { UpdateCareerDto } from './dto/update-career.dto';
 import { CheckApiKeyGuard } from 'src/auth/guards/check-api-key.guard';
-import { PaginationDto } from 'src/common/dtos/pagination-dto';
 
 @UseGuards(CheckApiKeyGuard)
 @Controller('career')
@@ -16,8 +15,8 @@ export class CareerController {
   }
 
   @Get()
-  findAll(@Query() paginationDto : PaginationDto ) {
-    return this.careerService.findAll(paginationDto);
+  findAll() {
+    return this.careerService.findAll();
   }
 
   @Get(':term')
