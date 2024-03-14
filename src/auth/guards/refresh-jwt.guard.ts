@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { JwtPayloadDto } from "../dto/jwt-payload-dto";
 
+// Toma el usuario de la reuqest y 
 @Injectable()
 export class JWTGuard implements CanActivate {
     constructor(

@@ -35,31 +35,45 @@ export class AuthService {
 
     
     async loginUser( loginUserDto : LoginUserDto ){
+      const user : User = await this.findUserLogin(loginUserDto);
+      return {
+        ...user,
+        token: this.getJwtToken({ sub: user.id_user_blogger }),
+        refreshToken: this.refreshJwtToken({ sub: user.id_user_blogger }),
+      };
+    }
+
+    async refreshToken( loginUserDto : LoginUserDto ){
+      const user : User = await this.findUserLogin(loginUserDto);
+      return {
+        token: this.getJwtToken({ sub: user.id_user_blogger })
+      };
+    }
+
+    async findUserLogin(loginUserDto : LoginUserDto) : Promise<User>{
       const { password, email } = loginUserDto;
 
       const user = await this.userRepository.findOne({
         where: { email },
         select: { email: true, password: true, id_user_blogger: true } //! OJO!
       });
-
+      
       if ( !user ) 
         throw new UnauthorizedException('Credentials are not valid (email)');
-        
+    
       if ( !bcrypt.compareSync( password, user.password ) )
         throw new UnauthorizedException('Credentials are not valid (password)');
-
-      delete user.password;
-
-      return {
-        ...user,
-        token: this.getJwtToken({ sub: user.id_user_blogger })
-      };
+      
+      return user;
     }
 
     private getJwtToken( jwtPayloadDto : JwtPayloadDto ){
       const payload = jwtPayloadDto;
-      console.log(payload);
       return this.jwtService.sign(payload);
+    }
+    private refreshJwtToken( jwtPayloadDto : JwtPayloadDto ){
+      const payload = jwtPayloadDto;
+      return this.jwtService.sign(payload, {expiresIn: '7d'});
     }
     // Se crea un usuario admin
     async createAdminUser( createUserAdminDto : CreateUserAdminDto ){

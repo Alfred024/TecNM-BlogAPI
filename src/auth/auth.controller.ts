@@ -35,5 +35,10 @@ export class AuthController {
   createBlogger( @Body() createBloggerDto : CreateBloggerDto){
     return this.authService.createBlogger(createBloggerDto);
   }
+
+  @Post('refresh-token')
+  refreshToken(){
+    
+  }
 }
    

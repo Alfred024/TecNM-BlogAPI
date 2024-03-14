@@ -31,9 +31,9 @@ import { JWTGuard } from './guards/jwt.guard';
       useFactory: ( configService: ConfigService ) => {
         return {
           secret: configService.get('jwt_secret'),
-          // signOptions: {
-          //   expiresIn: '2h'
-          // }
+          signOptions: {
+            expiresIn: '3600s'
+          }
         }
       }
     }),
