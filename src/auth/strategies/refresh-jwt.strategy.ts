@@ -17,8 +17,8 @@ export class RefreshJwtStrategy extends PassportStrategy( Strategy, 'jwt-refresh
         private readonly configService : ConfigService,
     ){
         super({
-            secretOrKey: configService.get('jwt_secret'),
-            jwtFromRequest: ExtractJwt.fromBodyField('refresh-token'),
+            secretOrKey: configService.get('refresh_jwt_secret'),
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         });
     }
 
@@ -27,7 +27,7 @@ export class RefreshJwtStrategy extends PassportStrategy( Strategy, 'jwt-refresh
 
         const user = await this.userRepository.findOneBy({id_user_blogger: sub});
         if ( !user ) 
-            throw new UnauthorizedException('Token not valid')
+            throw new UnauthorizedException('Refresh Token not valid')
             
         // if ( !user.confirmed ) 
         //     throw new UnauthorizedException('User is inactive, talk with an admin');

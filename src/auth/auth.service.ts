@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User } from './entities/user.entity';
 // Database ORM
 import { DataSource, Repository } from 'typeorm';
@@ -14,6 +14,8 @@ import { Blogger } from 'src/blogger/entities/blogger.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayloadDto } from './dto/jwt-payload-dto';
+import { REQUEST } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 
 
 @Injectable()
@@ -21,9 +23,13 @@ export class AuthService {
   constructor(
     // private readonly configService : ConfigService,
 
+    @Inject(REQUEST) private readonly request : any,
+
     private readonly dataSource : DataSource,
 
     private readonly jwtService : JwtService,
+
+    private config: ConfigService,
 
     @InjectRepository(User)
     private readonly userRepository : Repository<User>,
@@ -39,15 +45,23 @@ export class AuthService {
       return {
         ...user,
         token: this.getJwtToken({ sub: user.id_user_blogger }),
-        refreshToken: this.refreshJwtToken({ sub: user.id_user_blogger }),
+        refreshToken: this.getRefreshJwtToken({ sub: user.id_user_blogger }),
       };
     }
 
-    async refreshToken( loginUserDto : LoginUserDto ){
-      const user : User = await this.findUserLogin(loginUserDto);
-      return {
-        token: this.getJwtToken({ sub: user.id_user_blogger })
-      };
+    async getNewTokens() {
+      try {
+        const payload : JwtPayloadDto = this.request.user;
+        const sub : number = payload.sub;
+        const blogger = await this.bloggerRepository.findOneBy({id_user_blogger : sub});
+        // TODO CAMBIRA POR UN RETURN TIPADO
+        return {
+          "newToken": this.getJwtToken({ sub: blogger.id_user_blogger }),
+          "newRefreshToken": this.getRefreshJwtToken({ sub: blogger.id_user_blogger })
+        };
+      } catch (error) {
+        throw Error('Blogger wansnt found');
+      }
     }
 
     async findUserLogin(loginUserDto : LoginUserDto) : Promise<User>{
@@ -69,9 +83,10 @@ export class AuthService {
 
     private getJwtToken( jwtPayloadDto : JwtPayloadDto ){
       const payload = jwtPayloadDto;
-      return this.jwtService.sign(payload);
+      //return this.jwtService.sign(payload);
+      return this.jwtService.sign(payload, {secret: this.config.get('')});
     }
-    private refreshJwtToken( jwtPayloadDto : JwtPayloadDto ){
+    private getRefreshJwtToken( jwtPayloadDto : JwtPayloadDto ){
       const payload = jwtPayloadDto;
       return this.jwtService.sign(payload, {expiresIn: '7d'});
     }

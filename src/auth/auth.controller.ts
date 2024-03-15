@@ -12,6 +12,11 @@ import { JWTGuard } from './guards/jwt.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Get('refresh-token')
+  refreshToken(){
+    
+  }
+
   @Post('login')
   login(@Body() loginUserDto : LoginUserDto ){
     return this.authService.loginUser(loginUserDto);
@@ -34,11 +39,6 @@ export class AuthController {
   @UseGuards(JWTGuard)
   createBlogger( @Body() createBloggerDto : CreateBloggerDto){
     return this.authService.createBlogger(createBloggerDto);
-  }
-
-  @Post('refresh-token')
-  refreshToken(){
-    
   }
 }
    
