@@ -7,9 +7,34 @@ import { AuthModule } from './auth/auth.module';
 import { BloggerModule } from './blogger/blogger.module';
 import { CareerModule } from './career/career.module';
 import { BlogModule } from './blog/blog.module';
+import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
+import { EmailModule } from './email/email.module';
+
+
 
 @Module({
   imports: [
+
+    MailerModule.forRoot({
+      transport:{
+        //service: 'gmail',
+        host: 'smtp.mailersend.net',
+        //host: 'trial-0p7kx4xqm27g9yjr.mlsender.net',
+        port: 587,
+        secure: false,
+        auth:{
+          user: 'MS_FOAzp1@trial-0p7kx4xqm27g9yjr.mlsender.net',
+          //user: '21030761@itcelaya.edu.mx',
+          //user: 'apikey',
+          pass: 'HAgwjypPFarTHawX',
+          //pass: 'mlsn.8111fc8bc67c011e8f38b6dee48924023fcb0eae75ded285858dc5c9d695d87c',
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      }
+    }),
+
     ConfigModule.forRoot({
       load: [EnvConfig],
       validationSchema: JoiValidationSchema,
@@ -31,7 +56,7 @@ import { BlogModule } from './blog/blog.module';
     }),
 
     // API modules
-    AuthModule, BloggerModule, CareerModule, BlogModule,    
+    AuthModule, BloggerModule, CareerModule, BlogModule, EmailModule,    
   ],
 })
 export class AppModule {}
