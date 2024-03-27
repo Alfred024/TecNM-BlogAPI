@@ -51,16 +51,15 @@ export class AuthService {
 
     async getNewTokens() {
       try {
-        const payload : JwtPayloadDto = this.request.user;
-        const sub : number = payload.sub;
-        const blogger = await this.bloggerRepository.findOneBy({id_user_blogger : sub});
+        const sub : number = this.request.user.id_user_blogger;
+
         // TODO CAMBIRA POR UN RETURN TIPADO
         return {
-          "newToken": this.getJwtToken({ sub: blogger.id_user_blogger }),
-          "newRefreshToken": this.getRefreshJwtToken({ sub: blogger.id_user_blogger })
+          "newToken": this.getJwtToken({ sub: sub }),
+          "newRefreshToken": this.getRefreshJwtToken({ sub: sub })
         };
       } catch (error) {
-        throw Error('Blogger wansnt found');
+        throw Error('Couldn´t do this action. Please login again');
       }
     }
 
@@ -84,11 +83,17 @@ export class AuthService {
     private getJwtToken( jwtPayloadDto : JwtPayloadDto ){
       const payload = jwtPayloadDto;
       //return this.jwtService.sign(payload);
-      return this.jwtService.sign(payload, {secret: this.config.get('')});
+      return this.jwtService.sign(payload, {
+        secret: this.config.get('jwt_secret'),
+        expiresIn: '3600s'
+      });
     }
     private getRefreshJwtToken( jwtPayloadDto : JwtPayloadDto ){
       const payload = jwtPayloadDto;
-      return this.jwtService.sign(payload, {expiresIn: '7d'});
+      return this.jwtService.sign(payload, {
+        secret: this.config.get('refresh_jwt_secret'),
+        expiresIn: '7d'
+      });
     }
     // Se crea un usuario admin
     async createAdminUser( createUserAdminDto : CreateUserAdminDto ){

@@ -1,20 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode, HttpStatus, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserAdminDto } from './dto/create-user-admin-dto';
 import { CreateUserByAdminDto } from './dto/create-user-by-admin-dto';
 import { CreateBloggerDto } from 'src/blogger/dto/create-blogger.dto';
 import { LoginUserDto } from './dto/login-user-dto';
-import { AuthGuard } from '@nestjs/passport';
-import { CheckApiKeyGuard } from './guards/check-api-key.guard';
+// Crear archivo de barril para GUARDS
 import { JWTGuard } from './guards/jwt.guard';
+import { CheckApiKeyGuard } from './guards/check-api-key.guard';
+import { RefreshJWTGuard } from './guards/refresh-jwt.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('refresh-token')
-  refreshToken(){
-    
+  @UseGuards(RefreshJWTGuard)
+  refreshTokens() {
+    // const userId = req.user['sub'];
+    // const refreshToken = req.user['refreshToken'];
+    return this.authService.getNewTokens();
+    //return this.authService.refreshTokens(userId, refreshToken);
   }
 
   @Post('login')

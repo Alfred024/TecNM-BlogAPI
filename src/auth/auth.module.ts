@@ -13,10 +13,10 @@ import { BloggerModule } from 'src/blogger/blogger.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { Career } from 'src/career/entities/career.entity';
 import { JWTGuard } from './guards/jwt.guard';
+import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
   //providers: [AuthService, JwtStrategy, JWTGuard],
   imports:[
     ConfigModule,
@@ -25,24 +25,27 @@ import { JWTGuard } from './guards/jwt.guard';
 
     PassportModule.register({'defaultStrategy': 'jwt'}),
 
-    JwtModule.registerAsync({
-      imports: [ ConfigModule ],
-      inject: [ ConfigService ],
-      useFactory: ( configService: ConfigService ) => {
-        return {
-          secret: configService.get('jwt_secret'),
-          signOptions: {
-            expiresIn: '3600s'
-          }
-        }
-      }
-    }),
+    JwtModule.register({}),
+    
+    // JwtModule.registerAsync({
+    //   imports: [ ConfigModule ],
+    //   inject: [ ConfigService ],
+    //   useFactory: ( configService: ConfigService ) => {
+    //     return {
+    //       secret: configService.get('jwt_secret'),
+    //       signOptions: {
+    //         expiresIn: '3600s'
+    //       }
+    //     }
+    //   }
+    // }),
 
     // Modules components
     BloggerModule, Career,
     // DTO´s
     CreateBloggerDto, Blogger
   ],
+  providers: [AuthService, JwtStrategy, RefreshJwtStrategy, JWTGuard,],
   exports: [
     TypeOrmModule, JwtModule, PassportModule, 
   ],

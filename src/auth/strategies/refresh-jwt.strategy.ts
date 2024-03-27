@@ -19,6 +19,7 @@ export class RefreshJwtStrategy extends PassportStrategy( Strategy, 'jwt-refresh
         super({
             secretOrKey: configService.get('refresh_jwt_secret'),
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            // passReqToCallback: true,
         });
     }
 
@@ -28,10 +29,10 @@ export class RefreshJwtStrategy extends PassportStrategy( Strategy, 'jwt-refresh
         const user = await this.userRepository.findOneBy({id_user_blogger: sub});
         if ( !user ) 
             throw new UnauthorizedException('Refresh Token not valid')
-            
+        
         // if ( !user.confirmed ) 
         //     throw new UnauthorizedException('User is inactive, talk with an admin');
-
+        
         return user;
     }
 }
