@@ -16,6 +16,8 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayloadDto } from './dto/jwt-payload-dto';
 import { REQUEST } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { EmailService } from 'src/email/email.service';
+import { ConfirmationEmailDto } from 'src/email/dto/confirmation-email';
 
 
 @Injectable()
@@ -31,6 +33,8 @@ export class AuthService {
 
     private config: ConfigService,
 
+    private readonly emailService: EmailService,
+
     @InjectRepository(User)
     private readonly userRepository : Repository<User>,
 
@@ -39,7 +43,6 @@ export class AuthService {
 
   ){}
 
-    
     async loginUser( loginUserDto : LoginUserDto ){
       const user : User = await this.findUserLogin(loginUserDto);
       return {
@@ -122,15 +125,19 @@ export class AuthService {
         const user = this.userRepository.create({
           ...createUserByAdminDto
         }); 
-        // TODO: await función para mandar un correo al usuario, usa el token para concatenarlo al link del email 
-        await this.userRepository.save(user);
 
         const token = this.getJwtToken({ sub: user.id_user_blogger  });
-        // Este token no va aquí, se quita cuando se cree el servicio de email
-        return {
-          'message': 'Este token se debe quitar una vez se implemnete el servicio de SMTP',
-          'user': user,
+        const confirmationEmailDto : ConfirmationEmailDto = {
+          'destinationEmail': user.email,
           'token': token,
+        }
+
+        await this.emailService.sendConfirmationEmail(confirmationEmailDto);
+        await this.userRepository.save(user);
+
+        return {
+          "message": "User cretion succesfull, the email confirmation has been sent to complete the register",
+          'user': user,
         };
       } catch (error) {
         this.handleDBErrors(error);
@@ -149,8 +156,6 @@ export class AuthService {
       await this.updateUserPassword(user, password);
       
       // 3.- hace el insert de un blogger
-      //const blog = this.blogRepository.create({...createBlogDto, id_blogger: {id_blogger: blogger.id_blogger}});
-      //const blogger = this.bloggerRepository.create({...bloggerData, id_user_blogger: user.id_user_blogger, career: { id_career: id_career }});
       const blogger = this.bloggerRepository.create({...bloggerData, id_user_blogger: user.id_user_blogger, id_career: {id_career: id_career}});
       await this.bloggerRepository.save(blogger);
       return blogger;
