@@ -138,8 +138,8 @@ export class AuthService {
     }
 
     // El usuario registrado por un ADMIN crea un blogger
-    async createBlogger(createBloggerDto : CreateBloggerDto) {
-      const {email, password,...bloggerData } = createBloggerDto;
+    async createBlogger(createBloggerDto : CreateBloggerDto) {      
+      const {email, password, id_career,...bloggerData } = createBloggerDto;
 
       // 1.- busca el usuario por el email
       let user = await this.userRepository.findOne({where: {email}});
@@ -149,7 +149,9 @@ export class AuthService {
       await this.updateUserPassword(user, password);
       
       // 3.- hace el insert de un blogger
-      const blogger = this.bloggerRepository.create({...bloggerData, id_user_blogger: user.id_user_blogger });
+      //const blog = this.blogRepository.create({...createBlogDto, id_blogger: {id_blogger: blogger.id_blogger}});
+      //const blogger = this.bloggerRepository.create({...bloggerData, id_user_blogger: user.id_user_blogger, career: { id_career: id_career }});
+      const blogger = this.bloggerRepository.create({...bloggerData, id_user_blogger: user.id_user_blogger, id_career: {id_career: id_career}});
       await this.bloggerRepository.save(blogger);
       return blogger;
     }

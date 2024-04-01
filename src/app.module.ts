@@ -23,10 +23,9 @@ import { EmailModule } from './email/email.module';
         port: 587,
         secure: false,
         auth:{
-          user: 'MS_FOAzp1@trial-0p7kx4xqm27g9yjr.mlsender.net',
-          //user: '21030761@itcelaya.edu.mx',
+          user: 'MS_wycBDv@trial-0p7kx4xqm27g9yjr.mlsender.net',
+          pass: 'pgCy8kTxOfhClU5l',
           //user: 'apikey',
-          pass: 'HAgwjypPFarTHawX',
           //pass: 'mlsn.8111fc8bc67c011e8f38b6dee48924023fcb0eae75ded285858dc5c9d695d87c',
         },
         tls: {

@@ -1,7 +1,7 @@
 import { User } from "src/auth/entities/user.entity";
 import { Blog } from "src/blog/entities/blog.entity";
 import { Career } from "src/career/entities/career.entity";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('blogger')
 export class Blogger{
@@ -27,14 +27,17 @@ export class Blogger{
     @JoinColumn({name: 'id_user_blogger'})
     id_user_blogger : number
 
-    @OneToOne(() => Career, {'nullable': false})
-    @JoinColumn({name: 'id_career'})
-    id_career : number;
-
     @OneToMany(
         () => Blog,
         (blog) => blog.id_blogger,
         { eager: true }    
     )
     blogs?: Blog[];
+
+    @ManyToOne(
+        ()=> Career,
+        career => career.bloggers
+    )
+    @JoinColumn({name: 'id_career'})
+    id_career : Career;
 }

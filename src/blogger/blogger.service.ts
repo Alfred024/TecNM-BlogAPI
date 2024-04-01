@@ -76,9 +76,19 @@ export class BloggerService {
     return blogger.blogs;
   }
 
+  // TODO: Comprobar que funcione
   async update(id_blogger: number, updateBloggerDto: UpdateBloggerDto) {
+    // const blogger = await this.bloggerRepository.preload({
+    //   id_blogger, ...updateBloggerDto
+    // });
+
+    const {name, first_username, second_username, id_career} = updateBloggerDto;
     const blogger = await this.bloggerRepository.preload({
-      id_blogger, ...updateBloggerDto
+      'id_blogger': id_blogger,
+      'name': name,
+      'first_username': first_username,
+      'second_username': second_username,
+      'id_career': {'id_career': id_career},
     });
     if (!blogger) throw new NotFoundException(`Blgger with id: ${id_blogger} not found`);
 
