@@ -1,10 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { PaginationDto } from 'src/common/dtos/pagination-dto';
+import { CheckApiKeyGuard } from 'src/auth/guards/check-api-key.guard';
+
+// Protegí temporalmente todas las rutas directas para la creación de un blog
 
 @Controller('blog')
+@UseGuards(CheckApiKeyGuard)
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 

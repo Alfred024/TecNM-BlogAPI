@@ -33,11 +33,13 @@ export class BloggerController {
   }
 
   @Patch(':id')
+  // Checar que el rol sea admin u owner
   update(@Param('id') id: string, @Body() updateBloggerDto: UpdateBloggerDto) {
     return this.bloggerService.update(+id, updateBloggerDto);
   }
 
   @Delete(':id')
+  // Checar que el rol sea admin u owner
   remove(@Param('id') id: string) {
     return this.bloggerService.remove(id);
   }
