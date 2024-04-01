@@ -5,6 +5,7 @@ import { UpdateBloggerDto } from './dto/update-blogger.dto';
 import { CreateBlogDto } from 'src/blog/dto/create-blog.dto';
 import { PaginationDto } from 'src/common/dtos/pagination-dto';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
+import { CheckApiKeyGuard } from 'src/auth/guards/check-api-key.guard';
 
 @Controller('blogger')
 export class BloggerController {
@@ -34,12 +35,14 @@ export class BloggerController {
 
   @Patch(':id')
   // Checar que el rol sea admin u owner
+  @UseGuards(CheckApiKeyGuard)
   update(@Param('id') id: string, @Body() updateBloggerDto: UpdateBloggerDto) {
     return this.bloggerService.update(+id, updateBloggerDto);
   }
 
   @Delete(':id')
   // Checar que el rol sea admin u owner
+  @UseGuards(CheckApiKeyGuard)
   remove(@Param('id') id: string) {
     return this.bloggerService.remove(id);
   }
