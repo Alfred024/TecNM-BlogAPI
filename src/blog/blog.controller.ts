@@ -8,7 +8,7 @@ import { CheckApiKeyGuard } from 'src/auth/guards/check-api-key.guard';
 // Protegí temporalmente todas las rutas directas para la creación de un blog
 
 @Controller('blog')
-@UseGuards(CheckApiKeyGuard)
+// @UseGuards(CheckApiKeyGuard)
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 

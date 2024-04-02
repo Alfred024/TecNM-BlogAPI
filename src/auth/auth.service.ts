@@ -129,7 +129,6 @@ export class AuthService {
         const token = this.getJwtToken({ sub: user.id_user_blogger  });
         const confirmationEmailDto : ConfirmationEmailDto = {
           'destinationEmail': user.email,
-          'token': token,
         }
 
         await this.emailService.sendConfirmationEmail(confirmationEmailDto);

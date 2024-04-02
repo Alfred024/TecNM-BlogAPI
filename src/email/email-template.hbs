@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+
+    <!-- Font Awesome -->
+    <script
+      src="https://kit.fontawesome.com/cdb751df44.js"
+      crossorigin="anonymous"
+    ></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="https://alfred024.github.io/CSS-mio/styles.css">
+    <style>
+        div.container{
+            margin: auto;
+            display: flex;
+            flex-direction: column !important;
+            justify-content: center;
+            width: 320px;
+            padding: 20px;
+            background-color: #f0efef;
+            border-radius: 10px;
+        }
+        h4, p{
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        button{
+            padding: 10px;
+            width: 40%;
+            color: white;
+            background-color: #1B396A;
+            transition: 0.4s;
+            border-radius: 10px;
+            border: none;
+            margin: auto;
+            margin-top: 35px;
+        }
+        button:hover{
+            background-color: #375079;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="width: 320px;">
+        <h4 class="">Hola {{email_template.destinationEmail}}!</h4>
+        <p style="margin-block: 10px;">Por favor, presiona el botón de abajo para confirmar tu email 
+        <i class="fa-regular fa-envelope"></i> y unirte a 'BLOG API'.</p> 
+        
+        <input type="hidden" name="confirm">
+        <button class="" type="submit">Confirmar</button>       
+    </div>
+</body>
+</html>

@@ -13,14 +13,17 @@ export class EmailService {
     
 
     async sendConfirmationEmail(confirmationEmailDto : ConfirmationEmailDto){
-        const { destinationEmail, token } = confirmationEmailDto;
+        const { destinationEmail } = confirmationEmailDto;
 
         await this.mailService.sendMail({
             to: destinationEmail,
             from: 'MS_FOAzp1@trial-0p7kx4xqm27g9yjr.mlsender.net',
             //from: 'alfredo.jimeneztellez9@gmail.com',
             subject: 'Verificación BLOG TECnM',
-            text: token
+            template: 'email-template',
+            context:{
+                email_template: confirmationEmailDto,
+            }
         });
     }
 }

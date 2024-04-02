@@ -6,6 +6,8 @@ import { CreateBlogDto } from 'src/blog/dto/create-blog.dto';
 import { PaginationDto } from 'src/common/dtos/pagination-dto';
 import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { CheckApiKeyGuard } from 'src/auth/guards/check-api-key.guard';
+import { RoleProtected } from 'src/auth/decorators/role.decorator';
+import { ValidRoles } from 'src/auth/interfaces/valid-roles';
 
 @Controller('blogger')
 export class BloggerController {
@@ -35,7 +37,6 @@ export class BloggerController {
 
   @Patch(':id')
   // Checar que el rol sea admin u owner
-  @UseGuards(CheckApiKeyGuard)
   update(@Param('id') id: string, @Body() updateBloggerDto: UpdateBloggerDto) {
     return this.bloggerService.update(+id, updateBloggerDto);
   }

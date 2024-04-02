@@ -9,6 +9,8 @@ import { CareerModule } from './career/career.module';
 import { BlogModule } from './blog/blog.module';
 import { MailerModule, MailerOptions } from '@nestjs-modules/mailer';
 import { EmailModule } from './email/email.module';
+import { join } from 'path';
+import {HandlebarsAdapter} from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 
 
@@ -31,6 +33,11 @@ import { EmailModule } from './email/email.module';
         tls: {
           rejectUnauthorized: false
         }
+      },
+
+      template:{
+        dir: join(__dirname, 'email'),
+        adapter: new HandlebarsAdapter()
       }
     }),
 

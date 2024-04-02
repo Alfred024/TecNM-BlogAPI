@@ -5,6 +5,10 @@ export class ConfirmationEmailDto{
     @IsEmail()
     destinationEmail : string;
 
-    @IsString()
-    token : string;
+    // @IsString()
+    // @IsEmail()
+    // bloggerName : string;
+
+    // @IsString()
+    // token : string;
 }
