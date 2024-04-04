@@ -9,6 +9,7 @@ import { PaginationDto } from 'src/common/dtos/pagination-dto';
 import { REQUEST } from '@nestjs/core';
 import { User } from 'src/auth/entities/user.entity';
 import { JwtPayloadDto } from 'src/auth/dto/jwt-payload-dto';
+import { UpdateBlogDto } from 'src/blog/dto/update-blog.dto';
 
 @Injectable()
 export class BloggerService {
@@ -105,6 +106,27 @@ export class BloggerService {
     } catch (error) {
       this.handleDBExceptions(error);
     }
+  }
+
+  async updateBlog(id:string, updateBlogDto : UpdateBlogDto) {
+    const blog = await this.blogRepository.preload({id_blog: +id, ...updateBlogDto});
+    
+    if ( !blog ) throw new NotFoundException(`Blog with id: ${ id } wasn´t found`);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.save( blog );
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+      return 'Blog succesfully updated!!';
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+      this.handleDBExceptions(error);
+    }     
   }
 
   async remove(id: string) {

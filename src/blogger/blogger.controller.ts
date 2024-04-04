@@ -8,6 +8,7 @@ import { JWTGuard } from 'src/auth/guards/jwt.guard';
 import { CheckApiKeyGuard } from 'src/auth/guards/check-api-key.guard';
 import { RoleProtected } from 'src/auth/decorators/role.decorator';
 import { ValidRoles } from 'src/auth/interfaces/valid-roles';
+import { UpdateBlogDto } from 'src/blog/dto/update-blog.dto';
 
 @Controller('blogger')
 export class BloggerController {
@@ -31,11 +32,27 @@ export class BloggerController {
 
   @Post('create-new-blog')
   @UseGuards(JWTGuard)
-  create(@Body() createBlogDto : CreateBlogDto ){
+  createBlog(@Body() createBlogDto : CreateBlogDto ){
     return this.bloggerService.createBlog(createBlogDto);
   }
 
-  @Patch(':id')
+  @Patch('update-blog/:id')
+  @UseGuards(JWTGuard)
+  updateBlog(
+    @Param('id') id: string, 
+    @Body() updateBlogtDto: UpdateBlogDto,
+  ){
+    return this.bloggerService.updateBlog(id, updateBlogtDto);
+    return 'blogUpdated';
+  }
+
+  // @Delete('delete-blog')
+  // @UseGuards(JWTGuard)
+  // deleteBlog(@Body() createBlogDto : CreateBlogDto ){
+  //   return this.bloggerService.createBlog(createBlogDto);
+  // }
+
+  @Patch('update-blogger/:id')
   // Checar que el rol sea admin u owner
   update(@Param('id') id: string, @Body() updateBloggerDto: UpdateBloggerDto) {
     return this.bloggerService.update(+id, updateBloggerDto);
