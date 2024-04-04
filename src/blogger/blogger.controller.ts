@@ -43,14 +43,13 @@ export class BloggerController {
     @Body() updateBlogtDto: UpdateBlogDto,
   ){
     return this.bloggerService.updateBlog(id, updateBlogtDto);
-    return 'blogUpdated';
   }
 
-  // @Delete('delete-blog')
-  // @UseGuards(JWTGuard)
-  // deleteBlog(@Body() createBlogDto : CreateBlogDto ){
-  //   return this.bloggerService.createBlog(createBlogDto);
-  // }
+  @Delete('delete-blog/:id')
+  @UseGuards(JWTGuard)
+  deleteBlog(@Param('id') id : string ){
+    return this.bloggerService.deleteBlog(id);
+  }
 
   @Patch('update-blogger/:id')
   // Checar que el rol sea admin u owner

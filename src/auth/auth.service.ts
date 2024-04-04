@@ -44,12 +44,16 @@ export class AuthService {
   ){}
 
     async loginUser( loginUserDto : LoginUserDto ){
-      const user : User = await this.findUserLogin(loginUserDto);
-      return {
-        ...user,
-        token: this.getJwtToken({ sub: user.id_user_blogger }),
-        refreshToken: this.getRefreshJwtToken({ sub: user.id_user_blogger }),
-      };
+      try {
+        const user : User = await this.findUserLogin(loginUserDto);
+        return {
+          ...user,
+          token: this.getJwtToken({ sub: user.id_user_blogger }),
+          refreshToken: this.getRefreshJwtToken({ sub: user.id_user_blogger }),
+        };
+      } catch (error) {
+        throw new UnauthorizedException('Invalid credentials. Check that both email and password are correct');
+      }
     }
 
     async getNewTokens() {
@@ -126,17 +130,18 @@ export class AuthService {
           ...createUserByAdminDto
         }); 
 
-        const token = this.getJwtToken({ sub: user.id_user_blogger  });
         const confirmationEmailDto : ConfirmationEmailDto = {
           'destinationEmail': user.email,
         }
-
+        
         await this.emailService.sendConfirmationEmail(confirmationEmailDto);
         await this.userRepository.save(user);
+        const token = this.getJwtToken({ sub: user.id_user_blogger  });
 
         return {
           "message": "User cretion succesfull, the email confirmation has been sent to complete the register",
           'user': user,
+          'user-token': token,
         };
       } catch (error) {
         this.handleDBErrors(error);

@@ -129,8 +129,18 @@ export class BloggerService {
     }     
   }
 
+  async deleteBlog(id:string) {
+    const blog = await this.blogRepository.findOne({where: {id_blog: +id}});
+    if (!blog) throw new NotFoundException(`Blog with id: ${id} wasn´t found`);
+    const blogDeleted = await this.blogRepository.remove(blog);
+    return blogDeleted;
+  }
+
   async remove(id: string) {
     const blogger = await this.findOne(id);
+    return blogger;
+    if (!blogger) throw new NotFoundException(`Blog with id: ${id} wasn´t found`);
+
     const bloggerDeleted = await this.bloggerRepository.remove(blogger);
     return bloggerDeleted;
   }
