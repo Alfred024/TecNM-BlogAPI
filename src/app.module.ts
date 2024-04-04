@@ -16,34 +16,33 @@ import {HandlebarsAdapter} from '@nestjs-modules/mailer/dist/adapters/handlebars
 
 @Module({
   imports: [
-
-    MailerModule.forRoot({
-      transport:{
-        //service: 'gmail',
-        host: 'smtp.mailersend.net',
-        //host: 'trial-0p7kx4xqm27g9yjr.mlsender.net',
-        port: 587,
-        secure: false,
-        auth:{
-          user: 'MS_wycBDv@trial-0p7kx4xqm27g9yjr.mlsender.net',
-          pass: 'pgCy8kTxOfhClU5l',
-          //user: 'apikey',
-          //pass: 'mlsn.8111fc8bc67c011e8f38b6dee48924023fcb0eae75ded285858dc5c9d695d87c',
-        },
-        tls: {
-          rejectUnauthorized: false
-        }
-      },
-
-      template:{
-        dir: join(__dirname, 'email'),
-        adapter: new HandlebarsAdapter()
-      }
-    }),
-
     ConfigModule.forRoot({
       load: [EnvConfig],
       validationSchema: JoiValidationSchema,
+    }),
+
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService : ConfigService) =>({
+        transport:{
+          host: configService.get('smtp_host'),
+          port: configService.get('smtp_port'),
+          secure: false,
+          auth:{
+            user: configService.get('smtp_email'),
+            pass: configService.get('smtp_pwd'),
+          },
+          tls: {
+            rejectUnauthorized: false
+          },
+        },
+        template:{
+          dir: join(__dirname, 'email'),
+          adapter: new HandlebarsAdapter()
+        },
+        
+      }),
     }),
 
     TypeOrmModule.forRootAsync({
@@ -66,24 +65,3 @@ import {HandlebarsAdapter} from '@nestjs-modules/mailer/dist/adapters/handlebars
   ],
 })
 export class AppModule {}
-
-// // Config 2
-// ConfigModule.forRoot({
-//   load: [EnvConfig],
-//   validationSchema: JoiValidationSchema,
-// }),
-
-// TypeOrmModule.forRootAsync({
-//   imports: [ConfigModule],
-//   inject: [ConfigService],
-//   useFactory: (configService : ConfigService) =>({
-//     type: 'postgres',
-//     host: configService.get('db_host'),
-//     port: configService.get('db_port'),
-//     username: configService.get('db_user'),
-//     password: configService.get('db_user_pwd'),
-//     database: configService.get('db_name'),
-//     autoLoadEntities: true,
-//     synchronize: true,
-//   })
-// }),
