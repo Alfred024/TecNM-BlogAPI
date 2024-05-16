@@ -14,7 +14,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { Career } from 'src/career/entities/career.entity';
 import { JWTGuard } from './guards/jwt.guard';
 import { RefreshJwtStrategy } from './strategies/refresh-jwt.strategy';
-import { EmailModule } from 'src/email/email.module';
+// import { EmailModule } from 'src/email/email.module';
 import { EmailService } from 'src/email/email.service';
 
 @Module({
@@ -43,7 +43,8 @@ import { EmailService } from 'src/email/email.service';
     // }),
 
     // Modules components
-    BloggerModule, EmailModule, Career,
+    BloggerModule, Career,
+    // EmailModule,
     // DTO´s
     CreateBloggerDto, Blogger
   ],

@@ -30,6 +30,7 @@ export class AuthController {
   @Post('register-admin')
   @UseGuards(CheckApiKeyGuard)
   createAdminUser( @Body() createUserAdminDto : CreateUserAdminDto ){
+    //return 'Creando usuario';
     return this.authService.createAdminUser(createUserAdminDto);
   }
 

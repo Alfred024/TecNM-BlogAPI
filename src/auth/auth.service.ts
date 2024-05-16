@@ -33,7 +33,7 @@ export class AuthService {
 
     private config: ConfigService,
 
-    private readonly emailService: EmailService,
+    // private readonly emailService: EmailService,
 
     @InjectRepository(User)
     private readonly userRepository : Repository<User>,
@@ -134,7 +134,7 @@ export class AuthService {
           'destinationEmail': user.email,
         }
         
-        await this.emailService.sendConfirmationEmail(confirmationEmailDto);
+        // await this.emailService.sendConfirmationEmail(confirmationEmailDto);
         await this.userRepository.save(user);
         const token = this.getJwtToken({ sub: user.id_user_blogger  });
 

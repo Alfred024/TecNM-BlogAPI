@@ -21,29 +21,29 @@ import {HandlebarsAdapter} from '@nestjs-modules/mailer/dist/adapters/handlebars
       validationSchema: JoiValidationSchema,
     }),
 
-    MailerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService : ConfigService) =>({
-        transport:{
-          host: configService.get('smtp_host'),
-          port: configService.get('smtp_port'),
-          secure: false,
-          auth:{
-            user: configService.get('smtp_email'),
-            pass: configService.get('smtp_pwd'),
-          },
-          tls: {
-            rejectUnauthorized: false
-          },
-        },
-        template:{
-          dir: join(__dirname, 'email'),
-          adapter: new HandlebarsAdapter()
-        },
+    // MailerModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService : ConfigService) =>({
+    //     transport:{
+    //       host: configService.get('smtp_host'),
+    //       port: configService.get('smtp_port'),
+    //       secure: false,
+    //       auth:{
+    //         user: configService.get('smtp_email'),
+    //         pass: configService.get('smtp_pwd'),
+    //       },
+    //       tls: {
+    //         rejectUnauthorized: false
+    //       },
+    //     },
+    //     template:{
+    //       dir: join(__dirname, 'email'),
+    //       adapter: new HandlebarsAdapter()
+    //     },
         
-      }),
-    }),
+    //   }),
+    // }),
 
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -57,11 +57,18 @@ import {HandlebarsAdapter} from '@nestjs-modules/mailer/dist/adapters/handlebars
         database: configService.get('db_name'),
         autoLoadEntities: true,
         synchronize: true,
+        ssl: true, // If your database requires SSL connection, set this to true
+        extra: {
+            ssl: {
+                rejectUnauthorized: false // If using self-signed certificates, set this to false
+            }
+        }
       })
     }),
-
+    
     // API modules
-    AuthModule, BloggerModule, CareerModule, BlogModule, EmailModule,    
+    AuthModule, BloggerModule, CareerModule, BlogModule, 
+    // EmailModule,    
   ],
 })
 export class AppModule {}

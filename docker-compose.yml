@@ -11,4 +11,4 @@ services:
       POSTGRES_PASSWORD: ${DB_USER_PWD}
     container_name: blogDB
     volumes:
-      - ./postgres_blogdb:/var/lib/postgresql/data
+      - ./postgres_db_data:/var/lib/postgresql/data
